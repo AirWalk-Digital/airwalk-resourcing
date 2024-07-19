@@ -1,0 +1,53 @@
+name: Build and publish Docker images
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, beta]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    # container: ubuntu
+    services:
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 20.x
+      
+      - name: Install semantic-release extra plugins
+        run: mv package.json package.json.bak && npm install --no-save @semantic-release/changelog @semantic-release-plus/docker && mv package.json.bak package.json
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+    
+      - name: Build Docker Image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          # platforms: linux/amd64,linux/arm64
+          container: redis # Use the Redis service container
+          push: false
+          load: true
+          tags: airwalk-digital/airview-next
+          secrets: |
+            "FONTAWESOME_NPM_AUTH_TOKEN=${{ secrets.FONTAWESOME_NPM_AUTH_TOKEN }}"
+
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release
