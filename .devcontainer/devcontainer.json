@@ -1,7 +1,7 @@
 // See https://aka.ms/vscode-remote/devcontainer.json for format details or
 // https://aka.ms/vscode-dev-containers/definitions for sample configurations.
 {
-  "name": "Airview Next",
+  "name": "Airwalk resourcing",
   "dockerFile": "Dockerfile.vscode",
   "remoteUser": "vscode",
   //"mounts": [
@@ -19,7 +19,6 @@
   },
   // "postCreateCommand": "",
   "postCreateCommand": {
-    // "fix npm" : "rm -Rf /workspaces/airview-next/node_modules && ln -s /tmp/npm/node_modules /workspaces/airview-next/node_modules"
     "install modules": "cd ${containerWorkspaceFolder} && npm i"
   },
   "customizations": {
