@@ -21,7 +21,7 @@ module.exports = {
       {
         name: {
           namespace: 'airwalk-digital',
-          repository: 'airwalk-next',
+          repository: 'airwalk-resourcing',
         },
         registry: 'ghcr.io',
         skipLogin: true,
