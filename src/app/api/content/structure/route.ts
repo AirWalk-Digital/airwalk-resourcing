@@ -1,8 +1,6 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
-import { siteConfig } from '@/config';
-import { loadMenu, nestMenu } from '@/lib/Content/loadMenu';
 import { getLogger } from '@/lib/Logger';
 
 const logger = getLogger().child({ namespace: 'API:/api/content/structure' });
@@ -23,24 +21,7 @@ export async function GET(req: NextRequest) {
         { status: 400 }
       );
     }
-
-    // const docs = await getContent(
-    //   siteConfig.content[collection as keyof typeof siteConfig.content]
-    // );
-
-    const content = await loadMenu(
-      siteConfig,
-      siteConfig.content[collection as keyof typeof siteConfig.content]
-    );
-    const { menu: docs } = nestMenu(content, 'docs') ?? {};
-    logger.info(docs);
-    if (docs) {
-      return NextResponse.json(docs, { status: 200, statusText: 'OK' });
-    }
-    return NextResponse.json(
-      { error: `Structure not found: ${collection}` },
-      { status: 404 }
-    );
+    return NextResponse.json({ error: `Error in API` }, { status: 500 });
   } catch (err) {
     return NextResponse.json(
       { error: `Error in API: ${err}` },

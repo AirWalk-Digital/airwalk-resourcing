@@ -27,27 +27,6 @@ if (typeof window === 'undefined') {
   };
 }
 
-// const logger = pino(options);
-
-// const originalInfo = logger.info.bind(logger);
-// logger.info = (component: unknown | undefined, obj: any) => {
-//   const expandedObj = util.inspect(obj, { depth: null, colors: true });
-//   originalInfo(`${component}: ${expandedObj}`);
-// };
-
-// const originalError = logger.error.bind(logger);
-// logger.error = (component: unknown | undefined, obj: any) => {
-//   const expandedObj = util.inspect(obj, { depth: null, colors: true });
-//   originalError(`${component}: ${expandedObj}`);
-// };
-
-// const originalDebug = logger.debug.bind(logger);
-// logger.debug = (component: unknown | undefined, obj: any) => {
-//   const filename = path.basename(__filename);
-//   const expandedObj = util.inspect(obj, { depth: null, colors: true });
-//   originalDebug(`${component}: ${filename}: ${expandedObj}`);
-// };
-
 let logger: Logger;
 export const getLogger = () => {
   if (!logger) {

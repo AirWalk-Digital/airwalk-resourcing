@@ -29,50 +29,50 @@ export default function Page() {
 
   return (
     <ThemeProvider theme={baseTheme}>
-    <Box sx={{ width: '100%', typography: 'body1' }}>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs value={value} onChange={handleChange}>
-          <Tab
-            icon={<ReceiptIcon />}
-            iconPosition='start'
-            label='Demand'
-            index='0'
-          />
-          <Tab
-            icon={<SupervisedUserCircleIcon />}
-            iconPosition='start'
-            label='Resources'
-            index='1'
-          />
-          <Tab
-            icon={<PersonIcon />}
-            iconPosition='start'
-            label='Bench'
-            index='2'
-          />
+      <Box sx={{ width: '100%', typography: 'body1' }}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Tabs value={value} onChange={handleChange}>
+            <Tab
+              icon={<ReceiptIcon />}
+              iconPosition='start'
+              label='Demand'
+              index='0'
+            />
+            <Tab
+              icon={<SupervisedUserCircleIcon />}
+              iconPosition='start'
+              label='Resources'
+              index='1'
+            />
+            <Tab
+              icon={<PersonIcon />}
+              iconPosition='start'
+              label='Bench'
+              index='2'
+            />
 
-          <Tab
-            icon={<UploadIcon />}
-            iconPosition='start'
-            label='Upload'
-            index='3'
-          />
-        </Tabs>
+            <Tab
+              icon={<UploadIcon />}
+              iconPosition='start'
+              label='Upload'
+              index='3'
+            />
+          </Tabs>
+        </Box>
+
+        <TabPanel value={value} index={0}>
+          <DemandTableContainer />
+        </TabPanel>
+        <TabPanel value={value} index={1}>
+          <ResourceTable />
+        </TabPanel>
+        <TabPanel value={value} index={2}>
+          <ResourceTable bench={true} />
+        </TabPanel>
+        <TabPanel value={value} index={3}>
+          <FileUpload />
+        </TabPanel>
       </Box>
-
-      <TabPanel value={value} index={0}>
-        <DemandTableContainer />
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        <ResourceTable />
-      </TabPanel>
-      <TabPanel value={value} index={2}>
-        <ResourceTable bench={true} />
-      </TabPanel>
-      <TabPanel value={value} index={3}>
-        <FileUpload />
-      </TabPanel>
-    </Box>
     </ThemeProvider>
   );
 }
