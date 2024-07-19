@@ -34,15 +34,6 @@
     "paths": {
       "@/components/*": ["./src/_components/*"],
       "@/features/*": ["./src/_features/*"],
-      // "@/context/*": [
-      //   "context/*"
-      // ],
-      // "@/constants/*": [
-      //   "constants/*"
-      // ],
-      // "@/airview-cms-api": [
-      //   "lib/airview-cms-api"
-      // ],
       "@/lib/*": ["./src/lib/*"],
       "@/styles/*": ["./src/_styles/*"],
       "@/config": ["./site.config.ts"]
