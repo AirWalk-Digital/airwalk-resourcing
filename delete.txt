@@ -1,2 +1,0 @@
-Testing webhook trigger and GH action
-Using tag beta for Integration environment
