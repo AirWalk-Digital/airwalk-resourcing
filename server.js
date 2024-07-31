@@ -31,10 +31,12 @@ app.prepare().then(() => {
 
     // Custom route for /resourcing
     if (pathname.startsWith('/resourcing')) {
-      app.render(req, res, '/', parsedUrl.query);
-    } else {
-      handler(req, res, parsedUrl);
+      // Rewrite /resourcing to /
+      req.url = req.url.replace('/resourcing', '/');
     }
+
+    // Serve the Next.js app
+    handler(req, res, parsedUrl);
   });
 
   httpServer
