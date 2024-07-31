@@ -25,7 +25,17 @@ const handler = app.getRequestHandler();
 const nextUpgradeHandler = app.getUpgradeHandler();
 
 app.prepare().then(() => {
-  const httpServer = createServer(handler);
+  const httpServer = createServer((req, res) => {
+    const parsedUrl = parse(req.url, true);
+    const { pathname } = parsedUrl;
+
+    // Custom route for /resourcing
+    if (pathname.startsWith('/resourcing')) {
+      app.render(req, res, '/', parsedUrl.query);
+    } else {
+      handler(req, res, parsedUrl);
+    }
+  });
 
   httpServer
     .once('error', (err) => {
