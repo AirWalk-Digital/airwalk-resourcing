@@ -16,6 +16,10 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED 1
 
 # Build the application
+ARG ASSET_PREFIX
+ARG BASE_PATH
+ENV ASSET_PREFIX=${ASSET_PREFIX}
+ENV BASE_PATH=${BASE_PATH}
 RUN npm run build
 
 # Stage 2: Run
@@ -41,6 +45,9 @@ COPY --from=builder /app/middleware.ts ./
 USER nextjs
 
 EXPOSE 3000
+
+ENV ASSET_PREFIX=${ASSET_PREFIX}
+ENV BASE_PATH=${BASE_PATH}
 
 # Command to run the app
 CMD ["node", "server.js"]
