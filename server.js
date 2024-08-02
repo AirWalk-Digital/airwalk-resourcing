@@ -25,28 +25,22 @@ const handler = app.getRequestHandler();
 const nextUpgradeHandler = app.getUpgradeHandler();
 
 app.prepare().then(() => {
-  const httpServer = createServer((req, res) => {
-    const parsedUrl = parse(req.url, true);
-    const { pathname } = parsedUrl;
-
-    if (pathname.startsWith('/resourcing')) {
-      // Rewrite /resourcing to /
-      const newUrl = req.url.replace('/resourcing', '');
-      req.url = newUrl;
-      app.render(req, res, '/', parsedUrl.query);
-    } else {
-      handler(req, res, parsedUrl);
-    }
-  });
+  const httpServer = createServer(handler);
 
   httpServer
     .once('error', (err) => {
       console.error(err);
       process.exit(1);
     })
+    // eslint-disable-next-line consistent-return
     .on('upgrade', (request, socket, head) => {
+      // You may check auth of request here..
+      // See https://github.com/websockets/ws#client-authentication
+      /**
+       * @param {any} ws
+       */
       const { pathname } = parse(request.url || '/', true);
-
+      // Make sure we all for hot module reloading
       if (pathname === '/_next/webpack-hmr') {
         return nextUpgradeHandler(request, socket, head);
       }
@@ -55,7 +49,6 @@ app.prepare().then(() => {
         wss.emit('connection', ws, request);
       };
       wss.handleUpgrade(request, socket, head, handleAuth);
-      return undefined; // Explicitly return undefined to satisfy consistent-return
     })
     .listen(port, () => {
       console.log(`> Ready on http://${hostname}:${port}`);
