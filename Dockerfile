@@ -26,10 +26,6 @@ COPY . .
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
 ENV NEXT_TELEMETRY_DISABLED 1
-ARG ASSET_PREFIX
-ARG BASE_PATH
-ENV ASSET_PREFIX=${ASSET_PREFIX}
-ENV BASE_PATH=${BASE_PATH}
 
 RUN \
   if [ -f yarn.lock ]; then yarn run build; \
