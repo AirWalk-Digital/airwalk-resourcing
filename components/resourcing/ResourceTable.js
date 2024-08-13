@@ -34,9 +34,6 @@ function determineColor(mo) {
   const working = parseInt(mo.days_working, 10) || 0;
   const holiday = parseInt(mo.holiday, 10) || 0;
   const days = parseInt(mo.days_allocated, 10) || 0;
-  // if (!mo.days_working) {
-  // console.log('determineColor: ', holiday )
-  // }
   if (hypo === 0) {
     return 'primary';
   }
@@ -59,7 +56,6 @@ function UserPopup({ data, open, handleClose }) {
       tir: toggleTIR,
       mh: toggleMH,
     };
-    console.log('updated:', recordProposal);
     try {
       const response = await fetch('/api/resourcing/resources', {
         method: 'POST',
@@ -107,7 +103,6 @@ function UserPopup({ data, open, handleClose }) {
         );
         if (!response.ok) throw new Error('Network response was not ok');
         const fetchedData = await response.json();
-        // console.log('Resource:response: ', response)
 
         if (fetchedData.content && fetchedData.content.length > 0) {
           const jsonParsedData = JSON.parse(fetchedData.content);
@@ -123,8 +118,6 @@ function UserPopup({ data, open, handleClose }) {
 
           setResource(recordProposal); // Adjust according to actual API response
         }
-
-        // console.log('Resource:jsonParsedData: ', jsonParsedData)
       } catch (err) {
         console.error('Resource:ERROR: ', err);
       }
@@ -237,11 +230,6 @@ function Row({
   placeholder,
   refreshData,
 }) {
-  // console.debug('Row: ', data)
-  // if (placeholder) {
-  //     console.debug('Placeholder: ', placeholder)
-  // }
-  // {
   const [popupOpen, setPopupOpen] = useState(false);
 
   const handleInfoClick = () => {
@@ -294,7 +282,6 @@ function Row({
           // }}
           onClick={() => {
             const monthData = data.jobs.find((item) => item.month === month);
-            console.log('monthData: ', monthData);
             setPopupContent(monthData ? monthData.jobs : null);
             setShowPopup(true);
           }}
@@ -407,12 +394,16 @@ const ResourceTable = ({ bench = false }) => {
   const [error, setError] = useState(null);
   const [placeholder, setPlaceholder] = useState(null);
   const [months, setMonths] = useState([]);
-  //   const [months, setMonths] = useState([]);
-
-  //   const [filterRedMonths, setFilterRedMonths] = useState(false);
-  //   const [filterTIR, setFilterTIR] = useState(false);
-  //   const [filterSC, setFilterSC] = useState(false);
-  //   const [filterMH, setFilterMH] = useState(false);
+  // Define the initial state for the filters
+  const [filters, setFilters] = useState({
+    Red: false,
+    TIR: false,
+    SC: false,
+    MH: false,
+    fullBench: false,
+    partialBench: false,
+    Discipline: null,
+  });
 
   const displayedMonths = months
     ? months.slice(monthStartIndex, monthStartIndex + 3)
@@ -438,7 +429,6 @@ const ResourceTable = ({ bench = false }) => {
       setError(err.message);
       setIsLoading(false);
     }
-    console.log('ResourceTable:refreshData:loading: ', isLoading);
   };
 
   function groupByMailAndSumDays(fetchedData) {
@@ -475,13 +465,13 @@ const ResourceTable = ({ bench = false }) => {
   const fetchPlaceholderData = async () => {
     try {
       const response = await fetch('/api/resourcing/placeholder');
-      if (!response.ok) throw new Error('Network response was not ok');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
       const fetchedData = await response.json();
-      console.debug('Resource:placeholder: ', fetchedData.content);
 
       // const jsonParsedData = JSON.parse(fetchedData.content.length > 0 ? fetchedData.content : null)
       setPlaceholder(groupByMailAndSumDays(fetchedData.content)); // Adjust according to actual API response
-      // console.debug('Resource:placeholder: ', jsonParsedData)
     } catch (err) {
       console.error('Resource:ERROR: ', err);
     }
@@ -499,12 +489,6 @@ const ResourceTable = ({ bench = false }) => {
   };
 
   useEffect(() => {
-    // const sortUsersByName = (users) => {
-    //   return users
-    //     .filter((user) => user.displayName != null)
-    //     .sort((a, b) => a.displayName.localeCompare(b.displayName));
-    // };
-
     const filterRowsWithNoJobsAndLessHolidays = (users, chosenMonths) => {
       return users.filter((user) => {
         // Condition 1: Check if the user has no jobs in one or more of the displayed months
@@ -534,14 +518,6 @@ const ResourceTable = ({ bench = false }) => {
     };
 
     if (data && data.length > 0 && !isLoading) {
-      console.debug('ResourceTable:refreshData:loading: ', isLoading);
-      console.debug('ResourceTable:refreshData:data: ', data);
-
-      console.log(
-        'Null Users: ',
-        data.filter((user) => user.displayName === null)
-      );
-
       let usersToDisplay = sortUsersByName(data);
       usersToDisplay = usersToDisplay.filter(
         (item) => item.department !== 'Operations'
@@ -561,15 +537,6 @@ const ResourceTable = ({ bench = false }) => {
     }
   }, [data]);
 
-  // Define the initial state for the filters
-  const [filters, setFilters] = useState({
-    Red: false,
-    TIR: false,
-    SC: false,
-    MH: false,
-    Discipline: null,
-  });
-
   const handleFilterChange = (filterName, toggled) => {
     // Create a new filters object
     const newFilters = { ...filters, [filterName]: toggled };
@@ -582,8 +549,6 @@ const ResourceTable = ({ bench = false }) => {
       (item) => item.department !== 'Operations'
     );
 
-    console.log('handleFilterChange:filters: ', newFilters);
-    console.log('handleFilterChange:filterName: ', filterName, ' - ', toggled);
     // Apply all active filters
     if (newFilters.Discipline) {
       usersToDisplay = usersToDisplay.filter(
@@ -605,13 +570,28 @@ const ResourceTable = ({ bench = false }) => {
       usersToDisplay = usersToDisplay.filter((user) => user.info?.tir);
     }
     if (newFilters.SC) {
-      console.log('handleFilterChange:SC: ', newFilters.SC);
       usersToDisplay = usersToDisplay.filter((user) => user.info?.sc);
     }
     if (newFilters.MH) {
       usersToDisplay = usersToDisplay.filter((user) => user.info?.mh);
     }
-    console.log('handleFilterChange:usersToDisplay: ', usersToDisplay);
+
+    if (newFilters.fullBench) {
+      usersToDisplay = usersToDisplay.filter((user) => {
+        const hasJobsInDisplayedMonths = displayedMonths.some((month) =>
+          user.jobs.some((job) => job.month.startsWith(month))
+        );
+        return !hasJobsInDisplayedMonths;
+      });
+    }
+
+    if (newFilters.partialBench) {
+      usersToDisplay = usersToDisplay.filter((user) =>
+        user.jobs.some(
+          (job) => (job.holiday ?? 0 + job.days_allocated) < job.days_hypo
+        )
+      );
+    }
 
     setFilteredData(usersToDisplay);
   };
@@ -663,6 +643,28 @@ const ResourceTable = ({ bench = false }) => {
               />
             }
             label='Mansion House'
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                checked={filters.fullBench}
+                onChange={(e) =>
+                  handleFilterChange('fullBench', e.target.checked)
+                }
+              />
+            }
+            label='Full bench'
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                checked={filters.partialBench}
+                onChange={(e) =>
+                  handleFilterChange('partialBench', e.target.checked)
+                }
+              />
+            }
+            label='Partial bench'
           />
         </FormGroup>
       </Box>
@@ -755,11 +757,6 @@ const ResourceTable = ({ bench = false }) => {
               placeholder && placeholder[item.mail]
                 ? placeholder[item.mail]
                 : null;
-            if (value) {
-              console.log('item : --- ', item);
-              console.log('placeholder  ----', placeholder);
-              console.log('placeholder value --- : ', value);
-            }
             return (
               <Row
                 key={item.name}
